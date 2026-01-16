@@ -15,7 +15,7 @@ export async function initModels() {
   initEbillingRequest(sequelize);
   initRecoveryToken(sequelize);
   initMediaGallery(sequelize)
-  // await sequelize.sync(); // en prod: usar migraciones. Mantener comentado.
+  // await sequelize.sync(); // en prod: usar migraciones
 }
 
 export { sequelize };

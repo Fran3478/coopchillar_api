@@ -32,8 +32,8 @@ export async function create(req, res, next) {
     const input = req.validated.body;
     const post = await postService.create({ tenantId: req.user.tenantId, ...input });
     res.status(201).json(post);
-  } catch (e) { console.log(e); 
-    //next(e); 
+  } catch (e) {
+    next(e); 
     }
 }
 export async function update(req, res, next) {

@@ -1,4 +1,3 @@
-// routes/public/auth.routes.js
 import { Router } from 'express';
 import { login, refresh, logout, loginSchema } from '../../controllers/auth.controller.js';
 import { validate } from '../../middlewares/validate.js';

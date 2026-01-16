@@ -1,4 +1,3 @@
-// XXXX-create-media-gallery.js
 export async function up({ context: qi }) {
   const S = qi.sequelize.constructor;
 
@@ -9,7 +8,7 @@ export async function up({ context: qi }) {
     publicId: { type: S.STRING(255), allowNull: false },
     resourceType: { type: S.ENUM('image','video'), allowNull: false, defaultValue: 'image' },
 
-    url: { type: S.STRING(500), allowNull: false }, // secure_url
+    url: { type: S.STRING(500), allowNull: false },
 
     alt: { type: S.STRING(200) },
     description: { type: S.STRING(500) },

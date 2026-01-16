@@ -80,7 +80,7 @@ export async function remove(req, res, next) {
 
 export async function getById(req, res, next) {
   try {
-    const id = req.validated.params.id;            // gracias a validate(..., 'params')
+    const id = req.validated.params.id;
     const row = await svc.getOnePrivate({ tenantId: req.user.tenantId, id });
     res.json(row);
   } catch (e) { next(e); }

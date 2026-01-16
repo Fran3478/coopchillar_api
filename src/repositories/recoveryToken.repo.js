@@ -6,7 +6,6 @@ function hashToken(plain) {
   return crypto.createHash('sha256').update(plain).digest('hex');
 }
 
-// Token fácil de leer: XXXX-XXXX-XXXX-XXXX (base32)
 function generateReadableToken() {
   const buf = crypto.randomBytes(10);
   const base32 = buf.toString('base64').replace(/[^A-Z0-9]/gi, '').toUpperCase().slice(0, 16);

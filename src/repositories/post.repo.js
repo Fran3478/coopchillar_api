@@ -61,11 +61,9 @@ export async function updatePost(id, tenantId, data) {
 export async function findUsagesForPublicIds({ tenantId, publicIds = [] }) {
   if (!publicIds.length) return {};
 
-  // Buscamos candidatos con un OR grande (portada o blocksJson::text) para cualquiera de los ids
   const orClauses = [];
   for (const pid of publicIds) {
     orClauses.push({ portadaUrl: { [Op.iLike]: `%${pid}%` } });
-    // blocksJson::text ILIKE %pid%
     orClauses.push(sequelize.where(cast(col('blocksJson'), 'text'), { [Op.iLike]: `%${pid}%` }));
   }
 
@@ -74,7 +72,6 @@ export async function findUsagesForPublicIds({ tenantId, publicIds = [] }) {
     where: { tenantId, [Op.or]: orClauses }
   });
 
-  // Armamos un diccionario publicId -> usos[]
   const map = {};
   for (const r of rows) {
     const raw = r.get ? r.get() : r;

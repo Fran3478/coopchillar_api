@@ -1,4 +1,3 @@
-// src/routes/private/media.assets.routes.js
 import { Router } from 'express';
 import { requireAuth, requireRole } from '../../middlewares/auth.js';
 import { validate } from '../../middlewares/validate.js';
@@ -17,7 +16,6 @@ import {
 
 const r = Router();
 
-// Lectura: dejar a editor/admin/owner
 r.get('/media/folders',
   requireRole(['editor','admin','owner']),
   validate(foldersQuerySchema, 'query'),
@@ -30,7 +28,6 @@ r.get('/media/assets',
   listAssetsController
 );
 
-// Eliminación: por seguridad, solo admin/owner (podés incluir editor si querés)
 r.delete('/media/asset',
   requireRole(['admin','owner']),
   validate(deleteQuerySchema, 'query'),
@@ -55,7 +52,6 @@ r.patch('/media/gallery/assets/:id',
   update
 );
 
-// Delete duro: Cloudinary + DB, exige draft salvo force=true
 r.delete('/media/gallery/assets/:id',
   requireRole(['admin','owner']),
   validate(removeQuerySchema, 'query'),

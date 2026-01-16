@@ -19,7 +19,7 @@ const reqEmail = z.preprocess(
 );
 
 export const publicCreateSchema = z.object({
-    abonadoNumero: reqStrMin1, // requerido, admite número->string
+    abonadoNumero: reqStrMin1,
     dniCuit: z.preprocess(v => (v == null ? '' : v), z.coerce.string().trim().min(7)),
     nombre: reqStrMin2,
     apellido: reqStrMin2,

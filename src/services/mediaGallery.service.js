@@ -1,5 +1,5 @@
 import * as repo from '../repositories/mediaGallery.repo.js';
-import * as cloudRepo from '../repositories/media.cloudinary.repo.js'; // ya lo tenés
+import * as cloudRepo from '../repositories/media.cloudinary.repo.js';
 import { BadRequestError, ConflictError, NotFoundError } from '../utils/errors.js';
 
 /**
@@ -22,7 +22,7 @@ export async function saveMany({ tenantId, items }) {
       alt: meta.alt ?? null,
       description: meta.description ?? null,
       album: meta.album ?? null,
-      estado: meta.estado ?? 'published', // default
+      estado: meta.estado ?? 'published',
     };
   });
 
@@ -49,7 +49,6 @@ export async function update({ tenantId, id, data }) {
   return row; 
 }
 
-/** Delete duro: Cloudinary + DB. Requiere estado='draft' salvo force=true */
 export async function remove({ tenantId, id, force = false }) {
   const row = await repo.findById({ tenantId, id });
   if (!row) throw new NotFoundError('No encontrado');
@@ -58,19 +57,15 @@ export async function remove({ tenantId, id, force = false }) {
     throw new ConflictError('Para eliminar, primero marcá el recurso como draft (o usar force=true)');
   }
 
-  // borrar en Cloudinary
   const out = await cloudRepo.deleteAsset({
     publicId: row.publicId,
     resourceType: row.resourceType,
     invalidate: true
   });
-  // out.result puede ser 'ok' | 'not found' | 'already deleted'
-  // si no fue ok ni not found, considerá lanzar error:
   if (out?.result && !['ok','not found'].includes(out.result)) {
     throw new ConflictError(`Cloudinary: ${out.result}`);
   }
 
-  // borrar en DB
   await repo.destroyOne({ tenantId, id });
 
   return { ok: true, deleted: true, cloudinary: out?.result ?? 'ok' };

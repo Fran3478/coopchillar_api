@@ -1,8 +1,6 @@
-// src/repositories/media.cloudinary.repo.js
 import { v2 as cloudinary } from 'cloudinary';
 import { env } from '../config/env.js';
 
-// Asegurá que estas vars están en env: CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET, CLOUDINARY_FOLDER
 cloudinary.config({
   cloud_name: env.cloudinary.cloudName,
   api_key: env.cloudinary.apiKey,
@@ -10,29 +8,24 @@ cloudinary.config({
   secure: true
 });
 
-// Devuelve el path raíz del tenant en Cloudinary
 export function tenantRoot(tenantId) {
   return `${env.cloudinary.folder}/tenant_${tenantId}`;
 }
 
-// Lista subcarpetas inmediatas dentro de `parentFolder` (relativo al root del tenant)
 export async function listSubfolders({ tenantId, parent = '' }) {
   const root = tenantRoot(tenantId);
   const folderPath = parent ? `${root}/${parent}` : root;
   const { folders } = await cloudinary.api.sub_folders(folderPath);
-  // Mapeamos a rutas relativas al root del tenant
   return folders.map(f => ({
-    name: f.name,              // nombre de la subcarpeta
-    path: f.path.replace(`${root}/`, ''), // relativo al root del tenant
+    name: f.name,
+    path: f.path.replace(`${root}/`, ''),
   }));
 }
 
-// Lista assets por carpeta (relativa al root del tenant). Soporta paginación con next_cursor.
 export async function listAssetsByFolder({ tenantId, folder = '', resourceType = 'image', max = 50, cursor }) {
   const root = tenantRoot(tenantId);
   const folderPath = folder ? `${root}/${folder}` : root;
 
-  // Usamos la Search API (más flexible que resources_by_prefix)
   const expr = `folder:${folderPath}/*`;
   const search = cloudinary.search
     .expression(expr)
@@ -42,8 +35,6 @@ export async function listAssetsByFolder({ tenantId, folder = '', resourceType =
 
   if (cursor) search.next_cursor(cursor);
   if (resourceType && resourceType !== 'all') {
-    // NOTA: la expression puede filtrar por tipo, pero la Search API ya respeta resource_type del cliente
-    // Para unificar resultados, delegamos el tipo en client, y aquí no forzamos resource_type en expr.
   }
 
   const res = await search.execute();
@@ -54,7 +45,7 @@ export async function listAssetsByFolder({ tenantId, folder = '', resourceType =
       format: r.format,
       resourceType: r.resource_type,
       secureUrl: r.secure_url,
-      folder: r.folder.replace(`${root}/`, ''), // relativo al root del tenant
+      folder: r.folder.replace(`${root}/`, ''),
       bytes: r.bytes,
       width: r.width,
       height: r.height,
@@ -65,10 +56,7 @@ export async function listAssetsByFolder({ tenantId, folder = '', resourceType =
   return { items, nextCursor: res.next_cursor || null, totalCountApprox: res.total_count || undefined };
 }
 
-// Elimina un asset por publicId (completo, incluye subcarpetas). `invalidate` limpia CDN.
 export async function deleteAsset({ publicId, resourceType = 'image', invalidate = true }) {
-  // Para imágenes y videos:
-// cloudinary.uploader.destroy(publicId, { resource_type: 'video'|'image', invalidate: true })
   const out = await cloudinary.uploader.destroy(publicId, { resource_type: resourceType, invalidate });
-  return out; // { result: 'ok' | 'not found' | 'already deleted' ... }
+  return out;
 }
