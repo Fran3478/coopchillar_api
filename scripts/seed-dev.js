@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import bcrypt from 'bcryptjs';
 import { sequelize } from '../src/db/sequelize.js';
-import { initModels } from '../src/db/index.js';
+import { initModels } from '../src/db/models/index.js';
 import { env } from '../src/config/env.js';
 
 (async () => {
