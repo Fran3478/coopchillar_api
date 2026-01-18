@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import bcrypt from 'bcryptjs';
 import { sequelize } from '../src/db/sequelize.js';
-import { initModels, User } from '../src/db/index.js';
+import { initModels } from '../src/db/index.js';
 import { env } from '../src/config/env.js';
 
 (async () => {
@@ -10,7 +10,7 @@ import { env } from '../src/config/env.js';
     await initModels();
 
     const hash = await bcrypt.hash(env.admin.pass, 10);
-    await User.create({
+    await sequelize.models.User.create({
       tenantId: 1,
       email: env.admin.user,
       passwordHash: hash,
