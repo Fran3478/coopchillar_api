@@ -5,7 +5,6 @@ import helmet from 'helmet';
 import cors from 'cors';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
-import rateLimit from 'express-rate-limit';
 
 import { sequelize } from './src/db/sequelize.js';
 import { initModels } from './src/db/models/index.js';
@@ -15,13 +14,6 @@ import privateRouter from './src/routes/private/index.js';
 import errorHandler from './src/middlewares/errorHandler.js';
 
 const ALLOWED_ORIGINS = (process.env.CORS_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
-
-const authLimiter = rateLimit({
-  windowMs: 10 * 60 * 1000, // 10 min
-  max: 100,                  // 100 intentos por IP
-  standardHeaders: 'draft-7',
-  legacyHeaders: false
-});
 
 const app = express();
 
@@ -41,7 +33,6 @@ app.use(cookieParser());
 // Rutas
 app.use('/v1', publicRouter);
 app.use('/v1', privateRouter);
-app.use('/v1/auth/', authLimiter);
 
 app.use(errorHandler);
 
