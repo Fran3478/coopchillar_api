@@ -28,6 +28,7 @@ export const env = {
   },
   admin: {
     user: process.env.ADMIN,
-    pass: process.env.ADMIN_PASS
+    pass: process.env.ADMIN_PASS,
+    tenant: process.env.ADMIN_TENANT
   }
 };

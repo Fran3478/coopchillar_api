@@ -11,14 +11,14 @@ import { env } from '../src/config/env.js';
 
     const hash = await bcrypt.hash(env.admin.pass, 10);
     await sequelize.models.User.create({
-      tenantId: 1,
+      tenantId: env.admin.tenant,
       email: env.admin.user,
       passwordHash: hash,
       role: 'owner',
       status: 'active'
     });
 
-    console.log(`✓ Usuario seed: ${env.admin.user} / ${env.admin.pass} (tenantId=1)`);
+    console.log(`✓ Usuario seed: ${env.admin.user} / ${env.admin.pass} (tenantId=env.admin.tenant)`);
     process.exit(0);
   } catch (e) {
     console.error('Seed FAIL', e);
